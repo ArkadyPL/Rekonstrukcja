@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Rekonstrukcja
 {
+
+    // General TODO: prepare a few exemplary input files
+
     class Program
     {
         static void Main(string[] args)
@@ -20,6 +23,8 @@ namespace Rekonstrukcja
 
         static int[,] readInput()
         { 
+            // TODO: add possibility to generate random input of selected size
+            // TODO: in the end switch to reading file of given name from the current working directory
             string[] lines = File.ReadAllLines(".\\..\\..\\input.txt");
             int n = lines.Length;
             var result = new int[n, n];

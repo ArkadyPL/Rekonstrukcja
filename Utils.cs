@@ -8,7 +8,7 @@ namespace Rekonstrukcja
 {
     class Utils
     {    
-
+        
         public static void DisplayMatrix(int[,] matrix, int longestNumberLength)
         {
             int n = (int) Math.Sqrt(matrix.Length);
