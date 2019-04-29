@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rekonstrukcja
 {
@@ -15,13 +11,13 @@ namespace Rekonstrukcja
         static void Main(string[] args)
         {
             Console.WriteLine("Tree reconstruction\n");
-            var distanceMatrix = readInput();
-            var result = TreeFinder.findTree(distanceMatrix);
-            outputResult(result);
+            var distanceMatrix = ReadInput();
+            var result = TreeFinder.FindTree(distanceMatrix);
+            OutputResult(result);
             Console.Read();
         }
 
-        static int[,] readInput()
+        static int[,] ReadInput()
         { 
             // TODO: add possibility to generate random input of selected size
             // TODO: in the end switch to reading file of given name from the current working directory
@@ -47,7 +43,7 @@ namespace Rekonstrukcja
             return distanceMatrix;
         }
 
-        static void outputResult(int[,] result)
+        static void OutputResult(int[,] result)
         {
             // TODO: display result
             // TODO: save result to the file

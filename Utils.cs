@@ -1,14 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rekonstrukcja
 {
     class Utils
     {    
         
+        /**
+         * Only affects upper part of the matrix
+         */
+        public static int[,] EnlargeMatrixBy1(int[,] matrix)
+        {
+            int n = (int) Math.Sqrt(matrix.Length);
+            var biggerMatrix = new int[n + 1, n + 1];
+            for (var i = 0; i < n; i++)
+            {
+                for (var j = i; j < n; j++)
+                {
+                    biggerMatrix[i, j] = matrix[i, j];
+                }
+            }
+            return biggerMatrix;
+        }
+
         public static void DisplayMatrix(int[,] matrix, int longestNumberLength)
         {
             int n = (int) Math.Sqrt(matrix.Length);
