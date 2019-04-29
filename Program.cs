@@ -15,8 +15,8 @@ namespace Rekonstrukcja
         static void Main(string[] args)
         {
             Console.WriteLine("Tree reconstruction\n");
-            var input = readInput();
-            var result = TreeFinder.findTree(input);
+            var distanceMatrix = readInput();
+            var result = TreeFinder.findTree(distanceMatrix);
             outputResult(result);
             Console.Read();
         }
@@ -27,7 +27,7 @@ namespace Rekonstrukcja
             // TODO: in the end switch to reading file of given name from the current working directory
             string[] lines = File.ReadAllLines(".\\..\\..\\input.txt");
             int n = lines.Length;
-            var result = new int[n, n];
+            var distanceMatrix = new int[n, n];
             int longestNumberLength = 0;
             for (var i = 0; i < n; i++)
             {
@@ -38,13 +38,13 @@ namespace Rekonstrukcja
                     {
                         longestNumberLength = valuesInRow[j].Length;
                     }
-                    result[i, j] = int.Parse(valuesInRow[j]);
+                    distanceMatrix[i, j] = int.Parse(valuesInRow[j]);
                 }
             }
 
-            Console.WriteLine("Input adjacency matrix:");
-            Utils.DisplayMatrix(result, longestNumberLength);
-            return result;
+            Console.WriteLine("Input distance matrix:");
+            Utils.DisplayMatrix(distanceMatrix, longestNumberLength);
+            return distanceMatrix;
         }
 
         static void outputResult(int[,] result)

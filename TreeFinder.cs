@@ -11,13 +11,24 @@ namespace Rekonstrukcja
         /**
          * Matrix is always symmetric so it is enought to operate
          * in the upper half of the matrix throughout the whole algorithm.
+         * 
+         * d - stands for distanceMatrix
          */
         public static int[,] findTree(int[,] d)
         {
+            var result = new int[0,0];
             var Q = calculateQMatrix(d);
-            Tuple<int, int> minimalPair = findPairWithMinimalQValue(Q);
+            Tuple<int, int> u = findPairWithMinimalQValue(Q);
+            result = extendAdjacencyMatrix(result, u);
+            updateDistanceMatrix(d, u);
             // TODO: perform remaining calculations
-            return d;
+            return result;
+        }
+
+        private static int[,] extendAdjacencyMatrix(int[,] matrix, Tuple<int, int> newPair)
+        {
+            // todo: add new connection to the matrix
+            return matrix;
         }
 
         private static int[,] calculateQMatrix(int[,] d)
@@ -59,6 +70,14 @@ namespace Rekonstrukcja
                 }
             }
             return new Tuple<int, int>(i, j);
+        }
+
+        private static int[,] updateDistanceMatrix(int[,] d, Tuple<int, int> u)
+        {
+            int n = (int) Math.Sqrt(d.Length);
+            var newDistanceMatrix = new int[n + 1, n + 1];
+            // perform calculations
+            return newDistanceMatrix;
         }
     }
 }
