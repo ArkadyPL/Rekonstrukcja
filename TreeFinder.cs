@@ -15,6 +15,7 @@ namespace Rekonstrukcja
         public static int[,] findTree(int[,] d)
         {
             var Q = calculateQMatrix(d);
+            Tuple<int, int> minimalPair = findPairWithMinimalQValue(Q);
             // TODO: perform remaining calculations
             return d;
         }
@@ -38,6 +39,26 @@ namespace Rekonstrukcja
                 }
             }
             return Q;
+        }
+
+        private static Tuple<int, int> findPairWithMinimalQValue(int[,] Q)
+        {
+            int n = (int) Math.Sqrt(Q.Length);
+            int i = 1, j = 0;
+            int minimalSoFar = Q[1, 0];
+            for (var k = 0; k < n; k++)
+            {
+                for (var l = k + 1; l < n; l++)
+                {
+                    if (Q[k, l] < minimalSoFar)
+                    {
+                        minimalSoFar = Q[k, l];
+                        i = k;
+                        j = l;
+                    }
+                }
+            }
+            return new Tuple<int, int>(i, j);
         }
     }
 }
