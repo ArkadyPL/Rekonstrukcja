@@ -15,8 +15,8 @@ namespace Rekonstrukcja
         static void Main(string[] args)
         {
             Console.WriteLine("Tree reconstruction\n");
-            int[,] input = readInput();
-            int[,] result = findTree(input);
+            var input = readInput();
+            var result = TreeFinder.findTree(input);
             outputResult(result);
             Console.Read();
         }
@@ -45,12 +45,6 @@ namespace Rekonstrukcja
             Console.WriteLine("Input adjacency matrix:");
             Utils.DisplayMatrix(result, longestNumberLength);
             return result;
-        }
-
-        static int[,] findTree(int[,] input)
-        {
-            // TODO: perform calculations
-            return input;
         }
 
         static void outputResult(int[,] result)
