@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace Rekonstrukcja
 {
@@ -45,6 +46,9 @@ namespace Rekonstrukcja
 
         static void OutputResult(int[,] result)
         {
+            Console.WriteLine("\nResulting distance matrix");
+            var longestNumberLength = (from int item in result select item.ToString().Length).Max();
+            Utils.DisplayMatrix(result, longestNumberLength);
             // TODO: display result
             // TODO: save result to the file
         }

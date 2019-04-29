@@ -14,7 +14,7 @@ namespace Rekonstrukcja
             var biggerMatrix = new int[n + 1, n + 1];
             for (var i = 0; i < n; i++)
             {
-                for (var j = i; j < n; j++)
+                for (var j = 0; j < n; j++)
                 {
                     biggerMatrix[i, j] = matrix[i, j];
                 }
@@ -27,16 +27,16 @@ namespace Rekonstrukcja
             int n = (int) Math.Sqrt(matrix.Length);
             for (var i = 0; i < n; i++)
             {
-                Console.Write("| ");
+                Console.Write("|");
                 for (var j = 0; j < n; j++)
                 {
-                    Console.Write(matrix[i, j]);
                     for (var k = 0; k < longestNumberLength - NumberLength(matrix[i, j]) + 1; k++)
                     {
                         Console.Write(" ");
                     }
+                    Console.Write(matrix[i, j].ToString());
                 }
-                Console.WriteLine("|");
+                Console.WriteLine(" |");
             }
         }
 
