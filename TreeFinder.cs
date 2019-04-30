@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Rekonstrukcja
@@ -6,7 +7,7 @@ namespace Rekonstrukcja
     static class TreeFinder
     {
         private static readonly bool SUPPRESSED_VERTEX = true;
-        private static bool[] suppressedVertices;
+        private static List<bool> suppressedVertices;
         private static int initialSize;
 
         /**
@@ -19,8 +20,8 @@ namespace Rekonstrukcja
         {
             int n = (int) Math.Sqrt(d.Length);
             initialSize = n;
-            // TODO: calculate maximal necessary size of the list
-            suppressedVertices = new bool[2 * initialSize];
+            suppressedVertices = new List<bool>();
+            for (var i = 0; i < n; i++) suppressedVertices.Add(false);
 
             // TODO: make sure the condition is correct
             for (int i = 0; n != getAmountOfSuppressedVertices() + 2; i++)
@@ -113,13 +114,14 @@ namespace Rekonstrukcja
         {
             int n = (int) Math.Sqrt(d.Length);
             var newDistanceMatrix = Utils.EnlargeMatrixBy1(d);
+            suppressedVertices.Add(false); // we added new vertex, so we need one more place in the list
             var distance1 = FindDistanceToNewNode(newDistanceMatrix, u);
             var distance2 = newDistanceMatrix[u.Item1, u.Item2] - distance1;
             // vertex 1 and 2 are no longer connected to anything...
-            for (int i = u.Item1; i < initialSize; i++) newDistanceMatrix[u.Item1, i] = 0;
-            for (int i = u.Item1; i < initialSize; i++) newDistanceMatrix[i, u.Item1] = 0;
-            for (int i = u.Item2; i < initialSize; i++) newDistanceMatrix[u.Item2, i] = 0;
-            for (int i = u.Item2; i < initialSize; i++) newDistanceMatrix[i, u.Item2] = 0;
+            for (int i = u.Item1; i < n; i++) newDistanceMatrix[u.Item1, i] = 0;
+            for (int i = u.Item1; i < n; i++) newDistanceMatrix[i, u.Item1] = 0;
+            for (int i = u.Item2; i < n; i++) newDistanceMatrix[u.Item2, i] = 0;
+            for (int i = u.Item2; i < n; i++) newDistanceMatrix[i, u.Item2] = 0;
             // ...except there is a new vertex...
             for (int i = 0; i <= n; i++)
             {
