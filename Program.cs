@@ -49,8 +49,8 @@ namespace Rekonstrukcja
             Console.WriteLine("\nResulting distance matrix");
             var longestNumberLength = (from int item in result select item.ToString().Length).Max();
             Utils.DisplayMatrix(result, longestNumberLength);
-            // TODO: display result
-            // TODO: save result to the file
+            var neighborsList = Utils.ConvertMatrixToNeighborsList(result);
+            Utils.WriteNeighborsListToStream(neighborsList, Console.OpenStandardOutput());
         }
     }
 }
