@@ -5,8 +5,6 @@ using System.Linq;
 namespace Rekonstrukcja
 {
 
-    // General TODO: prepare a few exemplary input files
-
     class Program
     {
         static void Main(string[] args)
@@ -18,13 +16,13 @@ namespace Rekonstrukcja
             Console.Read();
         }
 
-        static int[,] ReadInput()
+        static double[,] ReadInput()
         { 
             // TODO: add possibility to generate random input of selected size
             // TODO: in the end switch to reading file of given name from the current working directory
-            string[] lines = File.ReadAllLines(".\\..\\..\\input.txt");
+            string[] lines = File.ReadAllLines(".\\..\\..\\przykładowe wejścia\\input1.txt");
             int n = lines.Length;
-            var distanceMatrix = new int[n, n];
+            var distanceMatrix = new double[n, n];
             int longestNumberLength = 0;
             for (var i = 0; i < n; i++)
             {
@@ -35,7 +33,7 @@ namespace Rekonstrukcja
                     {
                         longestNumberLength = valuesInRow[j].Length;
                     }
-                    distanceMatrix[i, j] = int.Parse(valuesInRow[j]);
+                    distanceMatrix[i, j] = double.Parse(valuesInRow[j]);
                 }
             }
 
@@ -44,10 +42,10 @@ namespace Rekonstrukcja
             return distanceMatrix;
         }
 
-        static void OutputResult(int[,] result)
+        static void OutputResult(double[,] result)
         {
             Console.WriteLine("\nResulting distance matrix");
-            var longestNumberLength = (from int item in result select item.ToString().Length).Max();
+            var longestNumberLength = (from double item in result select item.ToString().Length).Max();
             Utils.DisplayMatrix(result, longestNumberLength);
             var neighborsList = Utils.ConvertMatrixToNeighborsList(result);
             Utils.WriteNeighborsListToStream(neighborsList, Console.OpenStandardOutput());
