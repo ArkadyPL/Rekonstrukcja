@@ -20,7 +20,7 @@ namespace Rekonstrukcja
         { 
             // TODO: add possibility to generate random input of selected size
             // TODO: in the end switch to reading file of given name from the current working directory
-            string[] lines = File.ReadAllLines(".\\..\\..\\przykładowe wejścia\\input1.txt");
+            string[] lines = File.ReadAllLines(".\\..\\..\\przykładowe wejścia\\input7.txt");
             int n = lines.Length;
             var distanceMatrix = new double[n, n];
             int longestNumberLength = 0;
