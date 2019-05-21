@@ -19,11 +19,11 @@ namespace Rekonstrukcja
         public static double[,] FindTree(double[,] d)
         {
             int n = (int) Math.Sqrt(d.Length);
+            int initialSize = n;
             suppressedVertices = new List<bool>();
             for (var i = 0; i < n; i++) suppressedVertices.Add(false);
             
-            // TODO: make sure this end condition is correct
-            for (int i = 0; n - getAmountOfSuppressedVertices() >= 3; i++)
+            for (int i = 0; n <= 2 * initialSize - 3; i++)
             {
                 var Q = CalculateQMatrix(d);
                 var u = FindPairWithMinimalQValue(Q);
@@ -71,9 +71,10 @@ namespace Rekonstrukcja
             int n = (int) Math.Sqrt(Q.Length);
             int i = 1, j = 0;
             double minimalSoFar = Q[1, 0];
-            for (var k = 0; k < n; k++)
+
+            for (var k = n - 1; k >= 0; k--)
             {
-                for (var l = 0; l < n; l++)
+                for (var l = n - 1; l >= 0; l--)
                 {
                     if (!ShouldSkipVertex(l) && !ShouldSkipVertex(k) && Q[k, l] < minimalSoFar)
                     {
@@ -142,7 +143,7 @@ namespace Rekonstrukcja
                 {
                     newDistanceMatrix[i, n] = CalculateDistanceForOtherNodes(d, u, i);
                     newDistanceMatrix[n, i] = newDistanceMatrix[i, n];
-                }           
+                }
             }
             newDistanceMatrix[n, n] = 0;
             // "suppress" deleted vertices
@@ -153,7 +154,7 @@ namespace Rekonstrukcja
         
         private static double FindDistanceToNewNode(double[,] d, Tuple<int, int> u)
         {
-            int allNodes = (int)Math.Sqrt(d.Length) - 1;
+            int allNodes = (int) Math.Sqrt(d.Length) - 1;
             int notSuppressedNodes = allNodes - getAmountOfSuppressedVertices();
 
             double sum1 = 0, sum2 = 0;
@@ -162,12 +163,12 @@ namespace Rekonstrukcja
                 sum1 += ShouldSkipVertex(u.Item1) ? 0 : d[u.Item1, k];
                 sum2 += ShouldSkipVertex(u.Item2) ? 0 : d[u.Item2, k];
             }
-            return (int) (0.5 * d[u.Item1, u.Item2] + 1 / (2 * notSuppressedNodes - 4) * (sum1 - sum2));
+            return Math.Round(0.5 * d[u.Item1, u.Item2] + 1 / (2 * notSuppressedNodes - 4) * (sum1 - sum2));
         }
 
         private static double CalculateDistanceForOtherNodes(double[,] d, Tuple<int, int> u, int k)
         {
-            return 0.5 * (d[u.Item1, k] + d[u.Item2, k] - d[u.Item1, u.Item2]);
+            return Math.Round(0.5 * (d[u.Item1, k] + d[u.Item2, k] - d[u.Item1, u.Item2]));
         }
     }
 }
