@@ -32,7 +32,7 @@ namespace Rekonstrukcja
 
                 n = (int) Math.Sqrt(d.Length);
 
-                DisplayDebug(Q, d, i);
+                // DisplayDebug(Q, d, i);
             }
 
             // For odd-sized matrices there will be one not cleared initial node, clear it now

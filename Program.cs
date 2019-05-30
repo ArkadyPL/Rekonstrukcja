@@ -37,6 +37,7 @@ namespace Rekonstrukcja
             var distanceMatrix = ReadInput(filePath);
             var result = TreeFinder.FindTree(distanceMatrix);
             OutputResult(result, Console.OpenStandardOutput());
+            OutputResult(result, new FileStream("result.txt", FileMode.Create));
             Console.Read();
         }
 
@@ -87,8 +88,6 @@ namespace Rekonstrukcja
                     {
                         Console.WriteLine("n = " + i);
                         var matrix = InputGenerator.GenerateRandomInput(i);
-                        var longestNumberLength = (from double item in matrix select item.ToString().Length).Max();
-                        Utils.DisplayMatrix(matrix, longestNumberLength);
                         stopwatch.Start();
                         TreeFinder.FindTree(matrix);
                         stopwatch.Stop();
