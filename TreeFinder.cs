@@ -92,11 +92,11 @@ namespace Rekonstrukcja
             int i = 1, j = 0;
             double minimalSoFar = Q[1, 0];
 
-            for (var k = n - 1; k >= 0; k--)
+            for (var k = n - 1; k > 0; k--)
             {
-                for (var l = n - 1; l >= 0; l--)
+                for (var l = n - 1; l > 0; l--)
                 {
-                    if (!ShouldSkipVertex(l) && !ShouldSkipVertex(k) && Q[k, l] < minimalSoFar)
+                    if (k != l && !ShouldSkipVertex(l) && !ShouldSkipVertex(k) && Q[k, l] < minimalSoFar)
                     {
                         minimalSoFar = Q[k, l];
                         i = k;
@@ -178,17 +178,17 @@ namespace Rekonstrukcja
             // calculate missing distances for new vertex
             for (int i = 0; i < n; i++)
             {
-                if (i != u.Item1 && i != u.Item2 && !ShouldSkipVertex(i))
+                if (!ShouldSkipVertex(i))
                 {
                     newDistanceMatrix[i, n] = CalculateDistanceForOtherNodes(d, u, i);
                     newDistanceMatrix[n, i] = newDistanceMatrix[i, n];
                 }
             }
             newDistanceMatrix[n, n] = 0;
-            
+
             return newDistanceMatrix;
         }
-        
+
         private static double FindDistanceToNewNode(double[,] d, Tuple<int, int> u)
         {
             int allNodes = d.GetLength(0) - 1;

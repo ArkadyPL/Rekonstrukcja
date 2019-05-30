@@ -11,23 +11,37 @@ namespace Rekonstrukcja
     {
         static void Main(string[] args)
         {
-            if (args.Length == 1)
+            string filePath = null;
+
+            if (args.Length == 0)
             {
-                Console.WriteLine("Tree reconstruction\n");
-                var distanceMatrix = ReadInput(args[0]);
-                var result = TreeFinder.FindTree(distanceMatrix);
-                OutputResult(result, Console.OpenStandardOutput());
-                Console.Read();
+                Console.WriteLine("Do you want to run performance tests? (y/n)");
+                string answer = Console.ReadLine();
+                if (answer.ToLower() == "y" || answer.ToLower() == "yes")
+                {
+                    RunTest();
+                    Console.Read();
+                    return;
+                }
+
+                Console.WriteLine("Enter path to the file (relative from current working directory):");
+                filePath = Console.ReadLine();
             }
             else
             {
-                RunTest();
+                filePath = args[0];
             }
+            // filePath = "./../../exemplaryInputs/input2.txt";
+
+            Console.WriteLine("Tree reconstruction\n");
+            var distanceMatrix = ReadInput(filePath);
+            var result = TreeFinder.FindTree(distanceMatrix);
+            OutputResult(result, Console.OpenStandardOutput());
+            Console.Read();
         }
 
         static double[,] ReadInput(string filePath)
-        { 
-            // TODO: in the end switch to reading file of given name from the current working directory
+        {
             string[] lines = File.ReadAllLines(filePath);
             int n = lines.Length;
             var distanceMatrix = new double[n, n];
@@ -46,7 +60,7 @@ namespace Rekonstrukcja
             }
 
             Console.WriteLine("Input distance matrix:");
-            //Utils.DisplayMatrix(distanceMatrix, longestNumberLength);
+            Utils.DisplayMatrix(distanceMatrix, longestNumberLength);
             return distanceMatrix;
         }
 
@@ -61,15 +75,20 @@ namespace Rekonstrukcja
 
         static void RunTest()
         {
+            string resultsPath = "wyniki.txt";
             var stopwatch = new Stopwatch();
 
-            using (var stream = new FileStream("wyniki.txt", FileMode.Create))
+            Console.WriteLine("Performance tests - started");
+            using (var stream = new FileStream(resultsPath, FileMode.Create))
             {
                 using(var writer = new StreamWriter(stream))
                 {
                     for (int i = 5; i <= 200; i += 5)
                     {
+                        Console.WriteLine("n = " + i);
                         var matrix = InputGenerator.GenerateRandomInput(i);
+                        var longestNumberLength = (from double item in matrix select item.ToString().Length).Max();
+                        Utils.DisplayMatrix(matrix, longestNumberLength);
                         stopwatch.Start();
                         TreeFinder.FindTree(matrix);
                         stopwatch.Stop();
@@ -78,6 +97,7 @@ namespace Rekonstrukcja
                     }
                 }
             }
+            Console.WriteLine("Performance tests - finished, results were saved in " + resultsPath + " file");
         }
     }
 }
