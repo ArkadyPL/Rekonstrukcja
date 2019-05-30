@@ -18,7 +18,7 @@ namespace Rekonstrukcja
          */
         public static double[,] FindTree(double[,] d)
         {
-            int n = (int) Math.Sqrt(d.Length);
+            int n = d.GetLength(0);
             int initialSize = n;
             suppressedVertices = new List<bool>();
             for (var i = 0; i < n; i++) suppressedVertices.Add(false);
@@ -31,7 +31,7 @@ namespace Rekonstrukcja
 
                 n = (int) Math.Sqrt(d.Length);
 
-                // DisplayDebug(Q, d, i);
+                //DisplayDebug(Q, d, i);
             }
             return d;
         }

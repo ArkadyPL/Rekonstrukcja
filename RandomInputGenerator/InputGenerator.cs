@@ -3,12 +3,12 @@ using System.IO;
 
 namespace RandomInputGenerator
 {
-    internal class InputGenerator
+    public class InputGenerator
     {
-        internal static void GenerateRandomInput(int matrixSize, string filename)
+        public static double[,] GenerateRandomInput(int matrixSize)
         {
             var random = new Random();
-            var matrix = new int[matrixSize, matrixSize];
+            var matrix = new double[matrixSize, matrixSize];
             var distanceToCenter = new int[matrixSize];
 
             for (int i = 0; i < matrixSize; i++)
@@ -31,6 +31,13 @@ namespace RandomInputGenerator
                 }
             }
 
+            return matrix;
+        }
+
+        internal static void SaveInput(double[,] input, string filename)
+        {
+            int matrixSize = input.GetLength(0);
+
             using (var stream = new FileStream(filename, FileMode.Create))
             {
                 using (var writer = new StreamWriter(stream))
@@ -39,7 +46,7 @@ namespace RandomInputGenerator
                     {
                         for (int j = 0; j < matrixSize; j++)
                         {
-                            writer.Write(matrix[i, j]);
+                            writer.Write(input[i, j]);
                             if (j < matrixSize - 1)
                             {
                                 writer.Write(';');

@@ -30,7 +30,8 @@ namespace RandomInputGenerator
                     return;
                 }
             }
-            InputGenerator.GenerateRandomInput(matrixSize, fileName);
+            var randomInput = InputGenerator.GenerateRandomInput(matrixSize);
+            InputGenerator.SaveInput(randomInput, fileName);
         }
     }
 }

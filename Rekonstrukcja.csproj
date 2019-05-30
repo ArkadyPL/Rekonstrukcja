@@ -51,5 +51,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="RandomInputGenerator\RandomInputGenerator.csproj">
+      <Project>{78e3a7a0-5e7b-48f3-a8cc-27a7cf22e84b}</Project>
+      <Name>RandomInputGenerator</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

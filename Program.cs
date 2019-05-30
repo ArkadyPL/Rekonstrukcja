@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using RandomInputGenerator;
 
 namespace Rekonstrukcja
 {
@@ -9,17 +11,24 @@ namespace Rekonstrukcja
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Tree reconstruction\n");
-            var distanceMatrix = ReadInput();
-            var result = TreeFinder.FindTree(distanceMatrix);
-            OutputResult(result);
-            Console.Read();
+            if (args.Length == 1)
+            {
+                Console.WriteLine("Tree reconstruction\n");
+                var distanceMatrix = ReadInput(args[0]);
+                var result = TreeFinder.FindTree(distanceMatrix);
+                OutputResult(result, Console.OpenStandardOutput());
+                Console.Read();
+            }
+            else
+            {
+                RunTest();
+            }
         }
 
-        static double[,] ReadInput()
+        static double[,] ReadInput(string filePath)
         { 
             // TODO: in the end switch to reading file of given name from the current working directory
-            string[] lines = File.ReadAllLines(".\\..\\..\\przykładowe wejścia\\input1.txt");
+            string[] lines = File.ReadAllLines(filePath);
             int n = lines.Length;
             var distanceMatrix = new double[n, n];
             int longestNumberLength = 0;
@@ -37,17 +46,38 @@ namespace Rekonstrukcja
             }
 
             Console.WriteLine("Input distance matrix:");
-            Utils.DisplayMatrix(distanceMatrix, longestNumberLength);
+            //Utils.DisplayMatrix(distanceMatrix, longestNumberLength);
             return distanceMatrix;
         }
 
-        static void OutputResult(double[,] result)
+        static void OutputResult(double[,] result, Stream stream)
         {
             Console.WriteLine("\nResulting distance matrix");
             var longestNumberLength = (from double item in result select item.ToString().Length).Max();
             Utils.DisplayMatrix(result, longestNumberLength);
             var neighborsList = Utils.ConvertMatrixToNeighborsList(result);
-            Utils.WriteNeighborsListToStream(neighborsList, Console.OpenStandardOutput());
+            Utils.WriteNeighborsListToStream(neighborsList, stream);
+        }
+
+        static void RunTest()
+        {
+            var stopwatch = new Stopwatch();
+
+            using (var stream = new FileStream("wyniki.txt", FileMode.Create))
+            {
+                using(var writer = new StreamWriter(stream))
+                {
+                    for (int i = 5; i <= 200; i += 5)
+                    {
+                        var matrix = InputGenerator.GenerateRandomInput(i);
+                        stopwatch.Start();
+                        TreeFinder.FindTree(matrix);
+                        stopwatch.Stop();
+                        writer.WriteLine($"{i};{stopwatch.ElapsedMilliseconds}");
+                        stopwatch.Reset();
+                    }
+                }
+            }
         }
     }
 }
