@@ -9,6 +9,7 @@ namespace Rekonstrukcja
     {
         private static readonly bool SUPPRESSED_VERTEX = true;
         private static List<bool> suppressedVertices;
+        private static int initialSize;
 
         /**
          * Matrix is always symmetric so it is enought to operate
@@ -19,7 +20,7 @@ namespace Rekonstrukcja
         public static double[,] FindTree(double[,] d)
         {
             int n = d.GetLength(0);
-            int initialSize = n;
+            initialSize = n;
             suppressedVertices = new List<bool>();
             for (var i = 0; i < n; i++) suppressedVertices.Add(false);
             
@@ -31,20 +32,39 @@ namespace Rekonstrukcja
 
                 n = (int) Math.Sqrt(d.Length);
 
-                //DisplayDebug(Q, d, i);
+                DisplayDebug(Q, d, i);
             }
+
+            // For odd-sized matrices there will be one not cleared initial node, clear it now
+            for (int i = 0; i < initialSize; i++)
+            {
+                if (suppressedVertices[i] == false)
+                {
+                    for (int j = 0; j < n - 1; j++)
+                    {
+                        d[i, j] = 0;
+                        d[j, i] = 0;
+                    }
+                }
+            }
+
             return d;
         }
 
-        private static int getAmountOfSuppressedVertices()
+        private static int GetAmountOfSuppressedVertices()
         {
             return suppressedVertices.ToList().Where(v => v.Equals(true)).Count();
         }
 
+        private static int GetAmountOfInitiallSuppressedVertices()
+        {
+            return suppressedVertices.ToList().GetRange(0, initialSize).Where(v => v.Equals(true)).Count();
+        }
+
         private static double[,] CalculateQMatrix(double[,] d)
         {
-            int allNodes = (int)Math.Sqrt(d.Length);
-            int notSuppressedNodes = allNodes - getAmountOfSuppressedVertices();
+            int allNodes = d.GetLength(0);
+            int notSuppressedNodes = allNodes - GetAmountOfSuppressedVertices();
             var Q = new double[allNodes, allNodes];
 
             for (var i = 0; i < allNodes; i++)
@@ -68,7 +88,7 @@ namespace Rekonstrukcja
 
         private static Tuple<int, int> FindPairWithMinimalQValue(double[,] Q)
         {
-            int n = (int) Math.Sqrt(Q.Length);
+            int n = Q.GetLength(0);
             int i = 1, j = 0;
             double minimalSoFar = Q[1, 0];
 
@@ -114,17 +134,26 @@ namespace Rekonstrukcja
          */
         private static double[,] UpdateDistanceMatrix(double[,] d, Tuple<int, int> u)
         {
-            int n = (int) Math.Sqrt(d.Length);
+            int n = d.GetLength(0);
             var newDistanceMatrix = Utils.EnlargeMatrixBy1(d);
             suppressedVertices.Add(false); // we added new vertex, so we need one more place in the list
             var distance1 = FindDistanceToNewNode(newDistanceMatrix, u);
             var distance2 = d[u.Item1, u.Item2] - distance1;
-            
+
             // vertex 1 and 2 are no longer connected to anything...
-            for (int i = u.Item1; i < n; i++) newDistanceMatrix[u.Item1, i] = 0;
-            for (int i = u.Item1; i < n; i++) newDistanceMatrix[i, u.Item1] = 0;
-            for (int i = u.Item2; i < n; i++) newDistanceMatrix[u.Item2, i] = 0;
-            for (int i = u.Item2; i < n; i++) newDistanceMatrix[i, u.Item2] = 0;
+            for (int i = u.Item1; i < n; i++)
+            {
+                newDistanceMatrix[u.Item1, i] = 0;
+                newDistanceMatrix[i, u.Item1] = 0;
+            }
+            for (int i = u.Item2; i < n; i++)
+            {
+                newDistanceMatrix[u.Item2, i] = 0;
+                newDistanceMatrix[i, u.Item2] = 0;
+            }
+            // "suppress" deleted vertices
+            suppressedVertices[u.Item1] = SUPPRESSED_VERTEX;
+            suppressedVertices[u.Item2] = SUPPRESSED_VERTEX;
             // ...except there is a new vertex...
             for (int i = 0; i <= n; i++)
             {
@@ -132,10 +161,20 @@ namespace Rekonstrukcja
                 newDistanceMatrix[n, i] = 0;
             }
             // ... connected to them.
-            newDistanceMatrix[u.Item1, n] = distance1;
-            newDistanceMatrix[n, u.Item1] = distance1;
-            newDistanceMatrix[u.Item2, n] = distance2;
-            newDistanceMatrix[n, u.Item2] = distance2;
+            if (initialSize - GetAmountOfInitiallSuppressedVertices() != 1)
+            {
+                newDistanceMatrix[u.Item2, n] = distance1;
+                newDistanceMatrix[n, u.Item2] = distance1;
+                newDistanceMatrix[u.Item1, n] = distance2;
+                newDistanceMatrix[n, u.Item1] = distance2;
+            }
+            else
+            {
+                newDistanceMatrix[u.Item2, n] = distance2;
+                newDistanceMatrix[n, u.Item2] = distance2;
+                newDistanceMatrix[u.Item1, n] = distance1;
+                newDistanceMatrix[n, u.Item1] = distance1;
+            }
             // calculate missing distances for new vertex
             for (int i = 0; i < n; i++)
             {
@@ -146,16 +185,14 @@ namespace Rekonstrukcja
                 }
             }
             newDistanceMatrix[n, n] = 0;
-            // "suppress" deleted vertices
-            suppressedVertices[u.Item1] = SUPPRESSED_VERTEX;
-            suppressedVertices[u.Item2] = SUPPRESSED_VERTEX;
+            
             return newDistanceMatrix;
         }
         
         private static double FindDistanceToNewNode(double[,] d, Tuple<int, int> u)
         {
-            int allNodes = (int) Math.Sqrt(d.Length) - 1;
-            int notSuppressedNodes = allNodes - getAmountOfSuppressedVertices();
+            int allNodes = d.GetLength(0) - 1;
+            int notSuppressedNodes = allNodes - GetAmountOfSuppressedVertices();
 
             double sum1 = 0, sum2 = 0;
             for (var k = 0; k < allNodes; k++)
