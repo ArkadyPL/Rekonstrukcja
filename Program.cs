@@ -20,7 +20,6 @@ namespace Rekonstrukcja
                 if (answer.ToLower() == "y" || answer.ToLower() == "yes")
                 {
                     RunTest();
-                    Console.Read();
                     return;
                 }
 
@@ -39,12 +38,13 @@ namespace Rekonstrukcja
             var result = TreeFinder.FindTree(distanceMatrix);
             Console.WriteLine("\nResulting distance matrix");
             var longestNumberLength = (from double item in result select item.ToString().Length).Max();
-            Utils.DisplayMatrix(result, longestNumberLength);
+            Console.WriteLine();
+            //Utils.DisplayMatrix(result, longestNumberLength);
+            //Console.WriteLine();
             OutputResult(result, Console.OpenStandardOutput());
+            Console.WriteLine();
             OutputResult(result, new FileStream("result.txt", FileMode.Create));
             Console.WriteLine("Result has been saved to the file result.txt");
-            Console.WriteLine("Press any button and enter to exit...");
-            Console.Read();
         }
 
         static double[,] ReadInput(string filePath)
@@ -87,7 +87,7 @@ namespace Rekonstrukcja
             {
                 using(var writer = new StreamWriter(stream))
                 {
-                    for (int i = 5; i <= 100; i += 5)
+                    for (int i = 5; i <= 200; i += 5)
                     {
                         Console.WriteLine("n = " + i);
                         // We check each size 10 times to avoid outliers
