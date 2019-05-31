@@ -31,7 +31,7 @@ namespace Rekonstrukcja
             {
                 filePath = args[0];
             }
-            // filePath = "./../../exemplaryInputs/input2.txt";
+            // filePath = "./../../exemplaryInputs/input1.txt";
 
             Console.WriteLine("Tree reconstruction\n");
             var distanceMatrix = ReadInput(filePath);

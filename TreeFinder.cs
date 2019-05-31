@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace Rekonstrukcja
 {
-    // TODO: find out why it doesn't work in some cases (returns all zeros in some rows, doesn't build full solution)
     static class TreeFinder
     {
         private static readonly bool SUPPRESSED_VERTEX = true;
@@ -161,7 +160,7 @@ namespace Rekonstrukcja
                 newDistanceMatrix[n, i] = 0;
             }
             // ... connected to them.
-            if (initialSize - GetAmountOfInitiallSuppressedVertices() != 1)
+            if (!IsLastIteration())
             {
                 newDistanceMatrix[u.Item2, n] = distance1;
                 newDistanceMatrix[n, u.Item2] = distance1;
@@ -170,6 +169,7 @@ namespace Rekonstrukcja
             }
             else
             {
+                // For some reason we have to put distances in the opposite order in the last iteration
                 newDistanceMatrix[u.Item2, n] = distance2;
                 newDistanceMatrix[n, u.Item2] = distance2;
                 newDistanceMatrix[u.Item1, n] = distance1;
@@ -187,6 +187,11 @@ namespace Rekonstrukcja
             newDistanceMatrix[n, n] = 0;
 
             return newDistanceMatrix;
+        }
+
+        private static bool IsLastIteration()
+        {
+            return initialSize - GetAmountOfInitiallSuppressedVertices() == 1;
         }
 
         private static double FindDistanceToNewNode(double[,] d, Tuple<int, int> u)
