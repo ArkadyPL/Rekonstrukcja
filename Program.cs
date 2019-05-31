@@ -11,7 +11,7 @@ namespace Rekonstrukcja
     {
         static void Main(string[] args)
         {
-            string filePath = null;
+            string filePath;
 
             if (args.Length == 0)
             {
@@ -31,13 +31,19 @@ namespace Rekonstrukcja
             {
                 filePath = args[0];
             }
-            // filePath = "./../../exemplaryInputs/input1.txt";
+            // The way to quickly run one specific file - comment above and uncomment below
+            // filePath = "./../../exemplaryInputs/input5x5-a.txt";
 
             Console.WriteLine("Tree reconstruction\n");
             var distanceMatrix = ReadInput(filePath);
             var result = TreeFinder.FindTree(distanceMatrix);
+            Console.WriteLine("\nResulting distance matrix");
+            var longestNumberLength = (from double item in result select item.ToString().Length).Max();
+            Utils.DisplayMatrix(result, longestNumberLength);
             OutputResult(result, Console.OpenStandardOutput());
             OutputResult(result, new FileStream("result.txt", FileMode.Create));
+            Console.WriteLine("Result has been saved to the file result.txt");
+            Console.WriteLine("Press any button and enter to exit...");
             Console.Read();
         }
 
@@ -67,9 +73,6 @@ namespace Rekonstrukcja
 
         static void OutputResult(double[,] result, Stream stream)
         {
-            Console.WriteLine("\nResulting distance matrix");
-            var longestNumberLength = (from double item in result select item.ToString().Length).Max();
-            Utils.DisplayMatrix(result, longestNumberLength);
             var neighborsList = Utils.ConvertMatrixToNeighborsList(result);
             Utils.WriteNeighborsListToStream(neighborsList, stream);
         }
