@@ -87,14 +87,18 @@ namespace Rekonstrukcja
             {
                 using(var writer = new StreamWriter(stream))
                 {
-                    for (int i = 5; i <= 200; i += 5)
+                    for (int i = 5; i <= 100; i += 5)
                     {
                         Console.WriteLine("n = " + i);
-                        var matrix = InputGenerator.GenerateRandomInput(i);
-                        stopwatch.Start();
-                        TreeFinder.FindTree(matrix);
-                        stopwatch.Stop();
-                        writer.WriteLine($"{i};{stopwatch.ElapsedMilliseconds}");
+                        // We check each size 10 times to avoid outliers
+                        for (int j = 0; j < 10; j++)
+                        {
+                            var matrix = InputGenerator.GenerateRandomInput(i);
+                            stopwatch.Start();
+                            TreeFinder.FindTree(matrix);
+                            stopwatch.Stop();
+                        }
+                        writer.WriteLine($"{i};{stopwatch.ElapsedMilliseconds / 10.0}");
                         stopwatch.Reset();
                     }
                 }
