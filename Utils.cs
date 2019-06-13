@@ -10,10 +10,10 @@ namespace Rekonstrukcja
         /**
          * Only affects upper part of the matrix
          */
-        public static double[,] EnlargeMatrixBy1(double[,] matrix)
+        public static int[,] EnlargeMatrixBy1(int[,] matrix)
         {
             int n = (int) Math.Sqrt(matrix.Length);
-            var biggerMatrix = new double[n + 1, n + 1];
+            var biggerMatrix = new int[n + 1, n + 1];
             for (var i = 0; i < n; i++)
             {
                 for (var j = 0; j < n; j++)
@@ -24,7 +24,7 @@ namespace Rekonstrukcja
             return biggerMatrix;
         }
 
-        public static void DisplayMatrix(double[,] matrix, int longestNumberLength)
+        public static void DisplayMatrix(int[,] matrix, int longestNumberLength)
         {
             int n = (int) Math.Sqrt(matrix.Length);
             for (var i = 0; i < n; i++)
@@ -42,12 +42,12 @@ namespace Rekonstrukcja
             }
         }
 
-        private static int NumberLength(double number)
+        private static int NumberLength(int number)
         {
             return number.ToString().Length;
         }
 
-        internal static List<List<int>> ConvertMatrixToNeighborsList(double[,] result)
+        internal static List<List<int>> ConvertMatrixToNeighborsList(int[,] result)
         {
             var resultMatrixSize = result.GetLength(0);
             var neighborsList = new List<List<int>>(resultMatrixSize);

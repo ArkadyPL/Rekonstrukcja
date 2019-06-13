@@ -5,10 +5,10 @@ namespace RandomInputGenerator
 {
     public class InputGenerator
     {
-        public static double[,] GenerateRandomInput(int matrixSize)
+        public static int[,] GenerateRandomInput(int matrixSize)
         {
             var random = new Random();
-            var matrix = new double[matrixSize, matrixSize];
+            var matrix = new int[matrixSize, matrixSize];
             var distanceToCenter = new int[matrixSize];
 
             for (int i = 0; i < matrixSize; i++)
@@ -34,7 +34,7 @@ namespace RandomInputGenerator
             return matrix;
         }
 
-        internal static void SaveInput(double[,] input, string filename)
+        internal static void SaveInput(int[,] input, string filename)
         {
             int matrixSize = input.GetLength(0);
 

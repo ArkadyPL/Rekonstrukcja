@@ -16,7 +16,7 @@ namespace Rekonstrukcja
          * 
          * <param name="d">Distance matrix</param>
          */
-        public static double[,] FindTree(double[,] d)
+        public static int[,] FindTree(int[,] d)
         {
             int n = d.GetLength(0);
             initialSize = n;
@@ -60,11 +60,11 @@ namespace Rekonstrukcja
             return suppressedVertices.ToList().GetRange(0, initialSize).Where(v => v.Equals(true)).Count();
         }
 
-        private static double[,] CalculateQMatrix(double[,] d)
+        private static int[,] CalculateQMatrix(int[,] d)
         {
             int allNodes = d.GetLength(0);
             int notSuppressedNodes = allNodes - GetAmountOfSuppressedVertices();
-            var Q = new double[allNodes, allNodes];
+            var Q = new int[allNodes, allNodes];
 
             for (var i = 0; i < allNodes; i++)
             {
@@ -73,7 +73,7 @@ namespace Rekonstrukcja
                 {
                     if (ShouldSkipVertex(j) || i == j) continue;
 
-                    double sum1 = 0, sum2 = 0;
+                    int sum1 = 0, sum2 = 0;
                     for (var k = 0; k < allNodes; k++)
                     {
                         sum1 += ShouldSkipVertex(k) ? 0 : d[i, k];
@@ -85,11 +85,11 @@ namespace Rekonstrukcja
             return Q;
         }
 
-        private static Tuple<int, int> FindPairWithMinimalQValue(double[,] Q)
+        private static Tuple<int, int> FindPairWithMinimalQValue(int[,] Q)
         {
             int n = Q.GetLength(0);
             int i = 1, j = 0;
-            double minimalSoFar = Q[1, 0];
+            int minimalSoFar = Q[1, 0];
 
             for (var k = n - 1; k > 0; k--)
             {
@@ -106,15 +106,15 @@ namespace Rekonstrukcja
             return new Tuple<int, int>(i, j);
         }
 
-        private static void DisplayDebug(double[,] qm, double[,] dm, int round)
+        private static void DisplayDebug(int[,] qm, int[,] dm, int round)
         {
             Console.WriteLine($"\n\n Round: {round}");
             Console.WriteLine("QM");
-            var longestNumberLength = (from double item in qm select item.ToString().Length ).Max();
+            var longestNumberLength = (from int item in qm select item.ToString().Length ).Max();
             Utils.DisplayMatrix(qm, longestNumberLength);
 
             Console.WriteLine("DM");
-            longestNumberLength = (from double item in dm select item.ToString().Length).Max();
+            longestNumberLength = (from int item in dm select item.ToString().Length).Max();
             Utils.DisplayMatrix(dm, longestNumberLength);
 
             Console.WriteLine("SM");
@@ -131,7 +131,7 @@ namespace Rekonstrukcja
          * However here, we add new column instead, and "suppress" 2 columns that are meant to be deleted.
          * This way we don't have to care about changing indecies because they always remain the same.
          */
-        private static double[,] UpdateDistanceMatrix(double[,] d, Tuple<int, int> u)
+        private static int[,] UpdateDistanceMatrix(int[,] d, Tuple<int, int> u)
         {
             int n = d.GetLength(0);
             var newDistanceMatrix = Utils.EnlargeMatrixBy1(d);
@@ -194,23 +194,23 @@ namespace Rekonstrukcja
             return initialSize - GetAmountOfInitiallSuppressedVertices() == 1;
         }
 
-        private static double FindDistanceToNewNode(double[,] d, Tuple<int, int> u)
+        private static int FindDistanceToNewNode(int[,] d, Tuple<int, int> u)
         {
             int allNodes = d.GetLength(0) - 1;
             int notSuppressedNodes = allNodes - GetAmountOfSuppressedVertices();
 
-            double sum1 = 0, sum2 = 0;
+            int sum1 = 0, sum2 = 0;
             for (var k = 0; k < allNodes; k++)
             {
                 sum1 += ShouldSkipVertex(u.Item1) ? 0 : d[u.Item1, k];
                 sum2 += ShouldSkipVertex(u.Item2) ? 0 : d[u.Item2, k];
             }
-            return Math.Round(0.5 * d[u.Item1, u.Item2] + 1 / (2 * notSuppressedNodes - 4) * (sum1 - sum2));
+            return (int)Math.Round(0.5 * d[u.Item1, u.Item2] + 1 / (2 * notSuppressedNodes - 4) * (sum1 - sum2));
         }
 
-        private static double CalculateDistanceForOtherNodes(double[,] d, Tuple<int, int> u, int k)
+        private static int CalculateDistanceForOtherNodes(int[,] d, Tuple<int, int> u, int k)
         {
-            return Math.Round(0.5 * (d[u.Item1, k] + d[u.Item2, k] - d[u.Item1, u.Item2]));
+            return (int)Math.Round(0.5 * (d[u.Item1, k] + d[u.Item2, k] - d[u.Item1, u.Item2]));
         }
     }
 }

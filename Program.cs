@@ -47,11 +47,11 @@ namespace Rekonstrukcja
             Console.WriteLine("Result has been saved to the file result.txt");
         }
 
-        static double[,] ReadInput(string filePath)
+        static int[,] ReadInput(string filePath)
         {
             string[] lines = File.ReadAllLines(filePath);
             int n = lines.Length;
-            var distanceMatrix = new double[n, n];
+            var distanceMatrix = new int[n, n];
             int longestNumberLength = 0;
             for (var i = 0; i < n; i++)
             {
@@ -62,7 +62,7 @@ namespace Rekonstrukcja
                     {
                         longestNumberLength = valuesInRow[j].Length;
                     }
-                    distanceMatrix[i, j] = double.Parse(valuesInRow[j]);
+                    distanceMatrix[i, j] = int.Parse(valuesInRow[j]);
                 }
             }
 
@@ -71,7 +71,7 @@ namespace Rekonstrukcja
             return distanceMatrix;
         }
 
-        static void OutputResult(double[,] result, Stream stream)
+        static void OutputResult(int[,] result, Stream stream)
         {
             var neighborsList = Utils.ConvertMatrixToNeighborsList(result);
             Utils.WriteNeighborsListToStream(neighborsList, stream);
