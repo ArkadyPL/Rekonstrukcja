@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Rekonstrukcja
 {
@@ -47,55 +48,41 @@ namespace Rekonstrukcja
             return number.ToString().Length;
         }
 
-        internal static List<List<int>> ConvertMatrixToNeighborsList(int[,] result)
+        internal static List<List<int>> ConvertTreeToNeighboursList(Node root)
         {
-            var resultMatrixSize = result.GetLength(0);
-            var neighborsList = new List<List<int>>(resultMatrixSize);
-            for (int i = 0; i < resultMatrixSize; i++)
+            var neighboursList = new List<List<int>>();
+            var neigboursDictonary = new Dictionary<int, List<int>>();
+
+            List<int> visited = new List<int>();
+            Stack<Node> toVisit = new Stack<Node>();
+            toVisit.Push(root);
+            visited.Add(root.Index);
+
+            while (toVisit.Count > 0)
             {
-                neighborsList.Add(new List<int>());
-            }
-            var newVertexIndex = resultMatrixSize;
-            for (int i = 0; i < resultMatrixSize; i++)
-            {
-                for (int k = i + 1; k < resultMatrixSize; k++)
+                var node = toVisit.Pop();
+                var list = new List<int>();
+                foreach(var neighbour in node.Neighbours)
                 {
-                    if (result[i, k] == 1)
+                    if (!visited.Contains(neighbour.Index))
                     {
-                        neighborsList[i].Add(k);
-                        neighborsList[k].Add(i);
+                        toVisit.Push(neighbour);
+                        visited.Add(neighbour.Index);
                     }
-                    if (result[i,k] > 1)
-                    { 
-                        for (int l = 1; l < result[i,k]; l++)
-                        {
-                            neighborsList.Add(new List<int>());
-                            if (l == 1)
-                            {
-                                neighborsList[i].Add(newVertexIndex);
-                                neighborsList[newVertexIndex].Add(i);
-                            }
-                            else
-                            {
-                                neighborsList[newVertexIndex].Add(newVertexIndex - 1);
-                            }
 
-                            if (l == result[i,k] - 1)
-                            {
-                                neighborsList[k].Add(newVertexIndex);
-                                neighborsList[newVertexIndex].Add(k);
-                            }
-                            else
-                            {
-                                neighborsList[newVertexIndex].Add(newVertexIndex + 1);
-                            }
-
-                            newVertexIndex++;
-                        }
-                    }
+                    list.Add(neighbour.Index);
                 }
+
+                list = list.OrderBy(x => x).ToList();
+                neigboursDictonary.Add(node.Index, list);
             }
-            return neighborsList;
+            
+            foreach (var pair in neigboursDictonary.OrderBy(x => x.Key))
+            {
+                neighboursList.Add(pair.Value);
+            }
+
+            return neighboursList;
         }
 
         internal static void WriteNeighborsListToStream(List<List<int>> neighborsList, Stream stream)

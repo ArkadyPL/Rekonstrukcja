@@ -35,12 +35,8 @@ namespace Rekonstrukcja
 
             Console.WriteLine("Tree reconstruction\n");
             var distanceMatrix = ReadInput(filePath);
-            var result = TreeFinder.FindTree(distanceMatrix);
+            var result = new TreeFinder().FindTree(distanceMatrix);
             Console.WriteLine("\nResulting distance matrix");
-            var longestNumberLength = (from double item in result select item.ToString().Length).Max();
-            Console.WriteLine();
-            //Utils.DisplayMatrix(result, longestNumberLength);
-            //Console.WriteLine();
             OutputResult(result, Console.OpenStandardOutput());
             Console.WriteLine();
             OutputResult(result, new FileStream("result.txt", FileMode.Create));
@@ -71,9 +67,9 @@ namespace Rekonstrukcja
             return distanceMatrix;
         }
 
-        static void OutputResult(int[,] result, Stream stream)
+        static void OutputResult(Node result, Stream stream)
         {
-            var neighborsList = Utils.ConvertMatrixToNeighborsList(result);
+            var neighborsList = Utils.ConvertTreeToNeighboursList(result);
             Utils.WriteNeighborsListToStream(neighborsList, stream);
         }
 
@@ -95,7 +91,7 @@ namespace Rekonstrukcja
                         {
                             var matrix = InputGenerator.GenerateRandomInput(i);
                             stopwatch.Start();
-                            TreeFinder.FindTree(matrix);
+                            new TreeFinder().FindTree(matrix);
                             stopwatch.Stop();
                         }
                         writer.WriteLine($"{i};{stopwatch.ElapsedMilliseconds / 10.0}");

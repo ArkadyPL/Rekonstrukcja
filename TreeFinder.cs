@@ -4,213 +4,139 @@ using System.Linq;
 
 namespace Rekonstrukcja
 {
-    static class TreeFinder
+    class TreeFinder
     {
-        private static readonly bool SUPPRESSED_VERTEX = true;
-        private static List<bool> suppressedVertices;
-        private static int initialSize;
-
-        /**
-         * Matrix is always symmetric so it is enought to operate
-         * in the upper half of the matrix throughout the whole algorithm.
-         * 
-         * <param name="d">Distance matrix</param>
-         */
-        public static int[,] FindTree(int[,] d)
+        private readonly NodeBuilder nodeBuilder = new NodeBuilder();
+        public Node FindTree(int[,] distancesBetweenLeaves)
         {
-            int n = d.GetLength(0);
-            initialSize = n;
-            suppressedVertices = new List<bool>();
-            for (var i = 0; i < n; i++) suppressedVertices.Add(false);
-            
-            for (int i = 0; n <= 2 * initialSize - 3; i++)
+            List<Node> subTrees = this.InitiateSubTrees(distancesBetweenLeaves.GetLength(0));
+            List<Tuple<Node, Node, int>> distancesBetweenSubTrees = this.InitiateDistancesBetweenSubTrees(subTrees, distancesBetweenLeaves);
+
+            while (subTrees.Count > 1)
             {
-                var Q = CalculateQMatrix(d);
-                var u = FindPairWithMinimalQValue(Q);
-                d = UpdateDistanceMatrix(d, u);
+                var pair = distancesBetweenSubTrees.OrderBy(x => x.Item3).First();
+                distancesBetweenSubTrees.Remove(pair);
+                pair.Deconstruct(out Node subTree1, out Node subTree2, out int distance);
 
-                n = (int) Math.Sqrt(d.Length);
+                var firstNewNode = this.JoinSubTrees(subTree1, subTree2, distance);
+                Node newSubTreeRoot = this.FindNewRoot(subTree1, subTree2, firstNewNode, distance, distancesBetweenSubTrees, out var distanceFromSubTree1);
 
-                // DisplayDebug(Q, d, i);
+                this.UpdateSubTrees(subTrees, newSubTreeRoot, subTree1, subTree2);
+                distancesBetweenSubTrees = this.UpdateDistancesBetweenSubTrees(distancesBetweenSubTrees, newSubTreeRoot, subTree1, subTree2, distance, distanceFromSubTree1);
             }
 
-            // For odd-sized matrices there will be one not cleared initial node, clear it now
-            for (int i = 0; i < initialSize; i++)
+            return subTrees[0];
+        }
+
+        private List<Tuple<Node, Node, int>> UpdateDistancesBetweenSubTrees(
+            List<Tuple<Node, Node, int>> distancesBetweenSubTrees, 
+            Node newSubTree,
+            Node subTree1,
+            Node subTree2,
+            int distance,
+            int distanceFromSubTree1)
+        {
+            var newDistances = new List<Tuple<Node, Node, int>>();
+
+            foreach(var pair in distancesBetweenSubTrees)
             {
-                if (suppressedVertices[i] == false)
+                if (!(pair.Item1.Index == subTree1.Index || pair.Item1.Index == subTree2.Index ||
+                    pair.Item2.Index == subTree1.Index || pair.Item2.Index == subTree2.Index))
                 {
-                    for (int j = 0; j < n - 1; j++)
-                    {
-                        d[i, j] = 0;
-                        d[j, i] = 0;
-                    }
+                    newDistances.Add(pair);
+                }
+
+                if (pair.Item1.Index == subTree1.Index)
+                {
+                    newDistances.Add(new Tuple<Node, Node, int>(newSubTree, pair.Item2, pair.Item3 - distanceFromSubTree1));
+                }
+
+                if (pair.Item2.Index == subTree1.Index)
+                {
+                    newDistances.Add(new Tuple<Node, Node, int>(newSubTree, pair.Item1, pair.Item3 - distanceFromSubTree1));
                 }
             }
 
-            return d;
+            return newDistances;
         }
 
-        private static int GetAmountOfSuppressedVertices()
+        private void UpdateSubTrees(List<Node> subTrees, Node newSubTreeRoot, Node subTree1, Node subTree2)
         {
-            return suppressedVertices.ToList().Where(v => v.Equals(true)).Count();
+            subTrees.Remove(subTree1);
+            subTrees.Remove(subTree2);
+            subTrees.Add(newSubTreeRoot);
         }
 
-        private static int GetAmountOfInitiallSuppressedVertices()
+        private Node FindNewRoot(Node subTree1, Node subTree2, Node firstNewNode, int distance, List<Tuple<Node, Node, int>> distancesBetweenSubTrees, out int distanceFromSubTree1)
         {
-            return suppressedVertices.ToList().GetRange(0, initialSize).Where(v => v.Equals(true)).Count();
-        }
-
-        private static int[,] CalculateQMatrix(int[,] d)
-        {
-            int allNodes = d.GetLength(0);
-            int notSuppressedNodes = allNodes - GetAmountOfSuppressedVertices();
-            var Q = new int[allNodes, allNodes];
-
-            for (var i = 0; i < allNodes; i++)
+            if (distancesBetweenSubTrees.Count == 0)
             {
-                if (ShouldSkipVertex(i)) continue;
-                for (var j = 0; j < allNodes; j++)
-                {
-                    if (ShouldSkipVertex(j) || i == j) continue;
+                distanceFromSubTree1 = 0;
+                return subTree1;
+            }
+            var distance1 = distancesBetweenSubTrees.Find(x => x.Item1.Index == subTree1.Index || x.Item2.Index == subTree1.Index).Item3;
+            var distance2 = distancesBetweenSubTrees.Find(x => x.Item1.Index == subTree2.Index || x.Item2.Index == subTree2.Index).Item3;
 
-                    int sum1 = 0, sum2 = 0;
-                    for (var k = 0; k < allNodes; k++)
-                    {
-                        sum1 += ShouldSkipVertex(k) ? 0 : d[i, k];
-                        sum2 += ShouldSkipVertex(k) ? 0 : d[j, k];
-                    }
-                    Q[i, j] = (notSuppressedNodes - 2) * d[i, j] - sum1 - sum2;
+            if ((distance + distance1 - distance2) % 2 != 0)
+            {
+                throw new Exception();
+            }
+            distanceFromSubTree1 = (distance + distance1 - distance2) / 2;
+
+            var previousNode = subTree1;
+            var currentNode = firstNewNode;
+            for (int i = 1; i < distanceFromSubTree1; i++)
+            {
+                var tmp = currentNode;
+                currentNode = currentNode.Neighbours.Find(x => x.Index != previousNode.Index);
+                previousNode = tmp;
+            }
+
+            return currentNode;
+        }
+
+        private Node JoinSubTrees(Node subTree1, Node subTree2, int distance)
+        {
+            var previousTree = subTree2;
+            for (int i = 0; i < distance - 1; i++)
+            {
+                var currentTree = nodeBuilder.GetNode();
+                previousTree.Neighbours.Add(currentTree);
+                currentTree.Neighbours.Add(previousTree);
+
+                previousTree = currentTree;
+            }
+
+            previousTree.Neighbours.Add(subTree1);
+            subTree1.Neighbours.Add(previousTree);
+
+            return previousTree;
+        }
+
+        private List<Tuple<Node, Node, int>> InitiateDistancesBetweenSubTrees(List<Node> subTrees, int[,] distancesBetweenLeaves)
+        {
+            var distances = new List<Tuple<Node, Node, int>>();
+
+            for (int i = 0; i < subTrees.Count; i++)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    distances.Add(new Tuple<Node, Node, int>(subTrees[i], subTrees[j], distancesBetweenLeaves[i, j]));
                 }
             }
-            return Q;
+
+            return distances;
         }
 
-        private static Tuple<int, int> FindPairWithMinimalQValue(int[,] Q)
+        private List<Node> InitiateSubTrees(int leavesCount)
         {
-            int n = Q.GetLength(0);
-            int i = 1, j = 0;
-            int minimalSoFar = Q[1, 0];
-
-            for (var k = n - 1; k > 0; k--)
+            var subTrees = new List<Node>();
+            for (int i = 0; i < leavesCount; i++)
             {
-                for (var l = n - 1; l > 0; l--)
-                {
-                    if (k != l && !ShouldSkipVertex(l) && !ShouldSkipVertex(k) && Q[k, l] < minimalSoFar)
-                    {
-                        minimalSoFar = Q[k, l];
-                        i = k;
-                        j = l;
-                    }
-                }
+                subTrees.Add(nodeBuilder.GetNode());
             }
-            return new Tuple<int, int>(i, j);
-        }
 
-        private static void DisplayDebug(int[,] qm, int[,] dm, int round)
-        {
-            Console.WriteLine($"\n\n Round: {round}");
-            Console.WriteLine("QM");
-            var longestNumberLength = (from int item in qm select item.ToString().Length ).Max();
-            Utils.DisplayMatrix(qm, longestNumberLength);
-
-            Console.WriteLine("DM");
-            longestNumberLength = (from int item in dm select item.ToString().Length).Max();
-            Utils.DisplayMatrix(dm, longestNumberLength);
-
-            Console.WriteLine("SM");
-            Console.WriteLine("[" + String.Join(", ", suppressedVertices.ToArray()) + "]");
-        }
-
-        private static bool ShouldSkipVertex(int i)
-        {
-            return suppressedVertices[i] == SUPPRESSED_VERTEX;
-        }
-
-        /**
-         * In the theoretical algorithm matrix is reduced by 1 at this point.
-         * However here, we add new column instead, and "suppress" 2 columns that are meant to be deleted.
-         * This way we don't have to care about changing indecies because they always remain the same.
-         */
-        private static int[,] UpdateDistanceMatrix(int[,] d, Tuple<int, int> u)
-        {
-            int n = d.GetLength(0);
-            var newDistanceMatrix = Utils.EnlargeMatrixBy1(d);
-            suppressedVertices.Add(false); // we added new vertex, so we need one more place in the list
-            var distance1 = FindDistanceToNewNode(newDistanceMatrix, u);
-            var distance2 = d[u.Item1, u.Item2] - distance1;
-
-            // vertex 1 and 2 are no longer connected to anything...
-            for (int i = u.Item1; i < n; i++)
-            {
-                newDistanceMatrix[u.Item1, i] = 0;
-                newDistanceMatrix[i, u.Item1] = 0;
-            }
-            for (int i = u.Item2; i < n; i++)
-            {
-                newDistanceMatrix[u.Item2, i] = 0;
-                newDistanceMatrix[i, u.Item2] = 0;
-            }
-            // "suppress" deleted vertices
-            suppressedVertices[u.Item1] = SUPPRESSED_VERTEX;
-            suppressedVertices[u.Item2] = SUPPRESSED_VERTEX;
-            // ...except there is a new vertex...
-            for (int i = 0; i <= n; i++)
-            {
-                newDistanceMatrix[i, n] = 0;
-                newDistanceMatrix[n, i] = 0;
-            }
-            // ... connected to them.
-            if (!IsLastIteration())
-            {
-                newDistanceMatrix[u.Item2, n] = distance1;
-                newDistanceMatrix[n, u.Item2] = distance1;
-                newDistanceMatrix[u.Item1, n] = distance2;
-                newDistanceMatrix[n, u.Item1] = distance2;
-            }
-            else
-            {
-                // For some reason we have to put distances in the opposite order in the last iteration
-                newDistanceMatrix[u.Item2, n] = distance2;
-                newDistanceMatrix[n, u.Item2] = distance2;
-                newDistanceMatrix[u.Item1, n] = distance1;
-                newDistanceMatrix[n, u.Item1] = distance1;
-            }
-            // calculate missing distances for new vertex
-            for (int i = 0; i < n; i++)
-            {
-                if (!ShouldSkipVertex(i))
-                {
-                    newDistanceMatrix[i, n] = CalculateDistanceForOtherNodes(d, u, i);
-                    newDistanceMatrix[n, i] = newDistanceMatrix[i, n];
-                }
-            }
-            newDistanceMatrix[n, n] = 0;
-
-            return newDistanceMatrix;
-        }
-
-        private static bool IsLastIteration()
-        {
-            return initialSize - GetAmountOfInitiallSuppressedVertices() == 1;
-        }
-
-        private static int FindDistanceToNewNode(int[,] d, Tuple<int, int> u)
-        {
-            int allNodes = d.GetLength(0) - 1;
-            int notSuppressedNodes = allNodes - GetAmountOfSuppressedVertices();
-
-            int sum1 = 0, sum2 = 0;
-            for (var k = 0; k < allNodes; k++)
-            {
-                sum1 += ShouldSkipVertex(u.Item1) ? 0 : d[u.Item1, k];
-                sum2 += ShouldSkipVertex(u.Item2) ? 0 : d[u.Item2, k];
-            }
-            return (int)Math.Round(0.5 * d[u.Item1, u.Item2] + 1 / (2 * notSuppressedNodes - 4) * (sum1 - sum2));
-        }
-
-        private static int CalculateDistanceForOtherNodes(int[,] d, Tuple<int, int> u, int k)
-        {
-            return (int)Math.Round(0.5 * (d[u.Item1, k] + d[u.Item2, k] - d[u.Item1, u.Item2]));
+            return subTrees;
         }
     }
 }
