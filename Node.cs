@@ -6,10 +6,12 @@ namespace Rekonstrukcja
     {
         public int Index { get; set; }
         public List<Node> Neighbours { get; set; } = new List<Node>();
+        public bool IsLeaf { get; set; }
 
-        public Node(int index)
+        public Node(int index, bool isLeaf)
         {
             this.Index = index;
+            this.IsLeaf = isLeaf;
         }
     }
 }

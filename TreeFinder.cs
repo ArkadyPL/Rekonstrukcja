@@ -92,6 +92,12 @@ namespace Rekonstrukcja
                 previousNode = tmp;
             }
 
+            if (currentNode.IsLeaf)
+            {
+                distanceFromSubTree1--;
+                return previousNode;
+            }
+
             return currentNode;
         }
 
@@ -133,7 +139,7 @@ namespace Rekonstrukcja
             var subTrees = new List<Node>();
             for (int i = 0; i < leavesCount; i++)
             {
-                subTrees.Add(nodeBuilder.GetNode());
+                subTrees.Add(nodeBuilder.GetNode(true));
             }
 
             return subTrees;

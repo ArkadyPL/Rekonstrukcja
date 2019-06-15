@@ -4,9 +4,9 @@
     {
         private int currentIndex = 0;
 
-        public Node GetNode()
+        public Node GetNode(bool isLeaf = false)
         {
-            return new Node(currentIndex++);
+            return new Node(currentIndex++, isLeaf);
         }
     }
 }
