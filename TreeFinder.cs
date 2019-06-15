@@ -77,11 +77,11 @@ namespace Rekonstrukcja
             var distance1 = distancesBetweenSubTrees.Find(x => x.Item1.Index == subTree1.Index || x.Item2.Index == subTree1.Index).Item3;
             var distance2 = distancesBetweenSubTrees.Find(x => x.Item1.Index == subTree2.Index || x.Item2.Index == subTree2.Index).Item3;
 
-            if ((distance + distance1 - distance2) % 2 != 0)
-            {
-                throw new Exception();
-            }
             distanceFromSubTree1 = (distance + distance1 - distance2) / 2;
+            if (distanceFromSubTree1 == 0)
+            {
+                return subTree1;
+            }
 
             var previousNode = subTree1;
             var currentNode = firstNewNode;
