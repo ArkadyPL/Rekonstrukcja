@@ -22,7 +22,13 @@ namespace Rekonstrukcja
                 Node newSubTreeRoot = this.FindNewRoot(subTree1, subTree2, firstNewNode, distance, distancesBetweenSubTrees, out var distanceFromSubTree1);
 
                 this.UpdateSubTrees(subTrees, newSubTreeRoot, subTree1, subTree2);
-                distancesBetweenSubTrees = this.UpdateDistancesBetweenSubTrees(distancesBetweenSubTrees, newSubTreeRoot, subTree1, subTree2, distance, distanceFromSubTree1);
+                distancesBetweenSubTrees = this.UpdateDistancesBetweenSubTrees(
+                    distancesBetweenSubTrees, 
+                    newSubTreeRoot, 
+                    subTree1, 
+                    subTree2, 
+                    distanceFromSubTree1, 
+                    subTrees.Count);
             }
 
             return subTrees[0];
@@ -33,28 +39,41 @@ namespace Rekonstrukcja
             Node newSubTree,
             Node subTree1,
             Node subTree2,
-            int distance,
-            int distanceFromSubTree1)
+            int distanceFromSubTree1,
+            int subTreesCount)
         {
             var newDistances = new List<Tuple<Node, Node, int>>();
+            var distances = new Dictionary<int, int>();
+            foreach(var pair in distancesBetweenSubTrees)
+            {
+                if (pair.Item1.Index == subTree1.Index)
+                {
+                    newDistances.Add(new Tuple<Node, Node, int>(newSubTree, pair.Item2, pair.Item3 - distanceFromSubTree1));
+                    distances.Add(pair.Item2.Index, pair.Item3 - distanceFromSubTree1);
+                }
+
+                if (pair.Item2.Index == subTree1.Index)
+                {
+                    newDistances.Add(new Tuple<Node, Node, int>(pair.Item1, newSubTree, pair.Item3 - distanceFromSubTree1));
+                    distances.Add(pair.Item1.Index, pair.Item3 - distanceFromSubTree1);
+                }
+            }
 
             foreach(var pair in distancesBetweenSubTrees)
             {
                 if (!(pair.Item1.Index == subTree1.Index || pair.Item1.Index == subTree2.Index ||
                     pair.Item2.Index == subTree1.Index || pair.Item2.Index == subTree2.Index))
                 {
-                    newDistances.Add(pair);
+                    if (pair.Item3 > distances[pair.Item1.Index] + distances[pair.Item2.Index])
+                    {
+                        newDistances.Add(new Tuple<Node, Node, int>(pair.Item1, pair.Item2, distances[pair.Item1.Index] + distances[pair.Item2.Index]));
+                    }
+                    else
+                    {
+                        newDistances.Add(pair);
+                    }
                 }
 
-                if (pair.Item1.Index == subTree1.Index)
-                {
-                    newDistances.Add(new Tuple<Node, Node, int>(newSubTree, pair.Item2, pair.Item3 - distanceFromSubTree1));
-                }
-
-                if (pair.Item2.Index == subTree1.Index)
-                {
-                    newDistances.Add(new Tuple<Node, Node, int>(newSubTree, pair.Item1, pair.Item3 - distanceFromSubTree1));
-                }
             }
 
             return newDistances;
@@ -74,11 +93,24 @@ namespace Rekonstrukcja
                 distanceFromSubTree1 = 0;
                 return subTree1;
             }
-            var distance1 = distancesBetweenSubTrees.Find(x => x.Item1.Index == subTree1.Index || x.Item2.Index == subTree1.Index).Item3;
-            var distance2 = distancesBetweenSubTrees.Find(x => x.Item1.Index == subTree2.Index || x.Item2.Index == subTree2.Index).Item3;
+
+            var otherPair = distancesBetweenSubTrees.Find(x => x.Item1.Index == subTree1.Index || x.Item2.Index == subTree1.Index);
+            int otherNodeIndex;
+            if (otherPair.Item1.Index == subTree1.Index)
+            {
+                otherNodeIndex = otherPair.Item2.Index;
+            }
+            else
+            {
+                otherNodeIndex = otherPair.Item1.Index;
+            }
+
+            var distance1 = otherPair.Item3;
+            var distance2 = distancesBetweenSubTrees.Find(x => (x.Item1.Index == subTree2.Index && x.Item2.Index == otherNodeIndex) ||
+                (x.Item1.Index == otherNodeIndex && x.Item2.Index == subTree2.Index)).Item3;
 
             distanceFromSubTree1 = (distance + distance1 - distance2) / 2;
-            if (distanceFromSubTree1 == 0)
+            if (distanceFromSubTree1 <= 0)
             {
                 return subTree1;
             }
@@ -91,13 +123,7 @@ namespace Rekonstrukcja
                 currentNode = currentNode.Neighbours.Find(x => x.Index != previousNode.Index);
                 previousNode = tmp;
             }
-
-            if (currentNode.IsLeaf)
-            {
-                distanceFromSubTree1--;
-                return previousNode;
-            }
-
+            
             return currentNode;
         }
 
