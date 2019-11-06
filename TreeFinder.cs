@@ -110,7 +110,13 @@ namespace Rekonstrukcja
                 (x.Item1.Index == otherNodeIndex && x.Item2.Index == subTree2.Index)).Item3;
 
             distanceFromSubTree1 = (distance + distance1 - distance2) / 2;
-            if (distanceFromSubTree1 <= 0)
+
+            if ((distance + distance1 - distance2) % 2 != 0 || distanceFromSubTree1 < 0)
+            {
+                throw new Exception("Wrong input table!");
+            }
+
+            if (distanceFromSubTree1 == 0)
             {
                 return subTree1;
             }

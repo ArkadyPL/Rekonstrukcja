@@ -33,14 +33,21 @@ namespace Rekonstrukcja
             // The way to quickly run one specific file - comment above and uncomment below
             // filePath = "./../../exemplaryInputs/input5x5-a.txt";
 
-            Console.WriteLine("Tree reconstruction\n");
-            var distanceMatrix = ReadInput(filePath);
-            var result = new TreeFinder().FindTree(distanceMatrix);
-            Console.WriteLine("\nResulting distance matrix");
-            OutputResult(result, Console.OpenStandardOutput());
-            Console.WriteLine();
-            OutputResult(result, new FileStream("result.txt", FileMode.Create));
-            Console.WriteLine("Result has been saved to the file result.txt");
+            try
+            {
+                Console.WriteLine("Tree reconstruction\n");
+                var distanceMatrix = ReadInput(filePath);
+                var result = new TreeFinder().FindTree(distanceMatrix);
+                Console.WriteLine("\nResulting distance matrix");
+                OutputResult(result, Console.OpenStandardOutput());
+                Console.WriteLine();
+                OutputResult(result, new FileStream("result.txt", FileMode.Create));
+                Console.WriteLine("Result has been saved to the file result.txt");
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("An error occured: {0}", e.Message);
+            }
         }
 
         static int[,] ReadInput(string filePath)
