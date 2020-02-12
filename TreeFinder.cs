@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Rekonstrukcja
 {
-    class TreeFinder
+    public class TreeFinder
     {
         private readonly NodeBuilder nodeBuilder = new NodeBuilder();
         public Node FindTree(int[,] distancesBetweenLeaves)

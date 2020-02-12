@@ -7,7 +7,7 @@ using RandomInputGenerator;
 namespace Rekonstrukcja
 {
 
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -74,7 +74,7 @@ namespace Rekonstrukcja
             return distanceMatrix;
         }
 
-        static void OutputResult(Node result, Stream stream)
+        public static void OutputResult(Node result, Stream stream)
         {
             var neighborsList = Utils.ConvertTreeToNeighboursList(result);
             Utils.WriteNeighborsListToStream(neighborsList, stream);

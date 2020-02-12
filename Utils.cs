@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Rekonstrukcja
 {
-    class Utils
+    public class Utils
     {    
         
         /**
@@ -48,7 +48,7 @@ namespace Rekonstrukcja
             return number.ToString().Length;
         }
 
-        internal static List<List<int>> ConvertTreeToNeighboursList(Node root)
+        public static List<List<int>> ConvertTreeToNeighboursList(Node root)
         {
             var neighboursList = new List<List<int>>();
             var neigboursDictonary = new Dictionary<int, List<int>>();
@@ -104,6 +104,26 @@ namespace Rekonstrukcja
                     writer.WriteLine();
                 }
             }
+        }
+
+        public static string WriteNeighborsListToString(List<List<int>> neighborsList)
+        {
+            string result = "";
+            result += neighborsList.Count + "\n";
+
+            foreach (var vertexNeighbors in neighborsList)
+            {
+                for (int i = 0; i < vertexNeighbors.Count; i++)
+                {
+                    result += vertexNeighbors[i];
+                    if (i < vertexNeighbors.Count - 1)
+                    {
+                        result += ';';
+                    }
+                }
+                result += "\n";
+            }
+            return result;
         }
     }
 }
