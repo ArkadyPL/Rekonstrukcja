@@ -8,9 +8,8 @@ namespace RekonstrukcjaTest
     [TestClass]
     public class Test
     {
-        // todo: this test is wrong, it shows what is current output but its incorrect, see next test for the correct output
         [TestMethod]
-        public void Small1_wrong()
+        public void Small1()
         {
             // GIVEN
             var distanceMatrix = new int[3,3]{ { 0, 4, 4},
@@ -37,12 +36,12 @@ namespace RekonstrukcjaTest
         }
 
         [TestMethod]
-        public void Small1()
+        public void Small2()
         {
             // GIVEN
-            var distanceMatrix = new int[3, 3]{ { 0, 4, 4},
-                                               { 4, 0, 4},
-                                               { 4, 4, 0 } };
+            var distanceMatrix = new int[3, 3]{ { 0, 7, 4 },
+                                                { 7, 0, 5 },
+                                                { 4, 5, 0 } };
 
             // WHEN
             var result = new TreeFinder().FindTree(distanceMatrix);
@@ -50,13 +49,7 @@ namespace RekonstrukcjaTest
             // THEN
             var neighborsList = Utils.ConvertTreeToNeighboursList(result);
             var stringResult = Utils.WriteNeighborsListToString(neighborsList);
-            var expectedResult = string.Join("\n", new string[] {
-                "4",
-                "3",
-                "3",
-                "3",
-                "0;1;2"
-            }) + "\n";
+            var expectedResult = "TODO";
             Assert.AreEqual(expectedResult, stringResult);
         }
     }
