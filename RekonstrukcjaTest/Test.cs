@@ -49,7 +49,18 @@ namespace RekonstrukcjaTest
             // THEN
             var neighborsList = Utils.ConvertTreeToNeighboursList(result);
             var stringResult = Utils.WriteNeighborsListToString(neighborsList);
-            var expectedResult = "TODO";
+            var expectedResult = string.Join("\n", new string[] {
+                "9",
+                "3",
+                "6",
+                "5",
+                "0;4",
+                "3;5",
+                "2;4;8",
+                "1;7",
+                "6;8",
+                "5;7"
+            }) + "\n";
             Assert.AreEqual(expectedResult, stringResult);
         }
     }
