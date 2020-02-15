@@ -195,5 +195,66 @@ namespace RekonstrukcjaTest
             }) + "\n";
             Assert.AreEqual(expectedResult, stringResult);
         }
+
+        // TODO: verify whether the expected result is correct
+        [TestMethod]
+        public void Large2()
+        {
+            // GIVEN
+            var distanceMatrix = new int[7, 7] { {  0,  6, 10, 13, 18, 24, 18 },
+                                                 {  6,  0,  6,  9, 14, 20, 14 },
+                                                 { 10,  6,  0,  9, 14, 20, 14 },
+                                                 { 13,  9,  9,  0,  9, 15,  9 },
+                                                 { 18, 14, 14,  9,  0, 14,  8 },
+                                                 { 24, 20, 20, 15, 14,  0,  8 },
+                                                 { 18, 14, 14,  9,  8,  8,  0 } };
+
+            // WHEN
+            var result = new TreeFinder().FindTree(distanceMatrix);
+
+            // THEN
+            var neighborsList = Utils.ConvertTreeToNeighboursList(result);
+            var stringResult = Utils.WriteNeighborsListToString(neighborsList);
+            var amoutOfVertices = "36";
+            var expectedResult = string.Join("\n", new string[] { amoutOfVertices,
+                "7",
+                "11",
+                "15",
+                "20",
+                "26",
+                "30",
+                "29",
+                "0;8",
+                "7;9",
+                "8;10",
+                "9;11",
+                "1;10;12",
+                "11;13",
+                "12;14;16",
+                "13;15",
+                "2;14",
+                "13;17",
+                "16;18",
+                "17;19",
+                "18;20;21",
+                "3;19",
+                "19;22",
+                "21;23",
+                "22;24;27",
+                "23;25",
+                "24;26",
+                "4;25",
+                "23;28",
+                "27;29",
+                "6;28;35",
+                "5;31",
+                "30;32",
+                "31;33",
+                "32;34",
+                "33;35",
+                "29;34",
+            }) + "\n";
+            Assert.AreEqual(expectedResult, stringResult);
+        }
     }
 }
