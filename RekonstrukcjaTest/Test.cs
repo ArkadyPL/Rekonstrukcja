@@ -22,8 +22,8 @@ namespace RekonstrukcjaTest
             // THEN
             var neighborsList = Utils.ConvertTreeToNeighboursList(result);
             var stringResult = Utils.WriteNeighborsListToString(neighborsList);
-            var expectedResult = string.Join("\n", new string[] {
-                "7",
+            var amoutOfVertices = "7";
+            var expectedResult = string.Join("\n", new string[] { amoutOfVertices,
                 "3",
                 "5",
                 "6",
@@ -49,8 +49,8 @@ namespace RekonstrukcjaTest
             // THEN
             var neighborsList = Utils.ConvertTreeToNeighboursList(result);
             var stringResult = Utils.WriteNeighborsListToString(neighborsList);
-            var expectedResult = string.Join("\n", new string[] {
-                "9",
+            var amoutOfVertices = "9";
+            var expectedResult = string.Join("\n", new string[] { amoutOfVertices,
                 "3",
                 "6",
                 "5",
@@ -80,8 +80,8 @@ namespace RekonstrukcjaTest
             // THEN
             var neighborsList = Utils.ConvertTreeToNeighboursList(result);
             var stringResult = Utils.WriteNeighborsListToString(neighborsList);
-            var expectedResult = string.Join("\n", new string[] {
-                "18",
+            var amoutOfVertices = "18";
+            var expectedResult = string.Join("\n", new string[] { amoutOfVertices,
                 "7",
                 "10",
                 "15",
@@ -120,8 +120,8 @@ namespace RekonstrukcjaTest
             // THEN
             var neighborsList = Utils.ConvertTreeToNeighboursList(result);
             var stringResult = Utils.WriteNeighborsListToString(neighborsList);
-            var expectedResult = string.Join("\n", new string[] {
-                "16",
+            var amoutOfVertices = "16";
+            var expectedResult = string.Join("\n", new string[] { amoutOfVertices,
                 "11",
                 "14",
                 "7",
@@ -138,6 +138,60 @@ namespace RekonstrukcjaTest
                 "9;12;15",
                 "1;15",
                 "13;14"
+            }) + "\n";
+            Assert.AreEqual(expectedResult, stringResult);
+        }
+
+        [TestMethod]
+        public void Large1()
+        {
+            // GIVEN
+            var distanceMatrix = new int[7, 7] { {  0,  4,  8,  9, 14, 15, 16 },
+                                                 {  4,  0,  8,  9, 14, 15, 16 },
+                                                 {  8,  8,  0,  7, 12, 13, 14 },
+                                                 {  9,  9,  7,  0,  9, 10, 11 },
+                                                 { 14, 14, 12,  9,  0,  9, 10 },
+                                                 { 15, 15, 13, 10,  9,  0,  5 },
+                                                 { 16, 16, 14, 11, 10,  5,  0 } };
+
+            // WHEN
+            var result = new TreeFinder().FindTree(distanceMatrix);
+
+            // THEN
+            var neighborsList = Utils.ConvertTreeToNeighboursList(result);
+            var stringResult = Utils.WriteNeighborsListToString(neighborsList);
+            var amoutOfVertices = "30";
+            var expectedResult = string.Join("\n", new string[] { amoutOfVertices,
+                "7",
+                "9",
+                "18",
+                "21",
+                "27",
+                "10",
+                "13",
+                "0;8",
+                "7;9;14",
+                "1;8",
+                "5;11",
+                "10;12;26",
+                "11;13",
+                "6;12",
+                "8;15",
+                "14;16",
+                "15;17;19",
+                "16;18",
+                "2;17",
+                "16;20",
+                "19;21;22",
+                "3;20",
+                "20;23",
+                "22;24",
+                "23;25;29",
+                "24;26",
+                "11;25",
+                "4;28",
+                "27;29",
+                "24;28"
             }) + "\n";
             Assert.AreEqual(expectedResult, stringResult);
         }
