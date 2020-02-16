@@ -255,5 +255,32 @@ namespace RekonstrukcjaTest
             }) + "\n";
             Assert.AreEqual(expectedResult, stringResult);
         }
+
+        [TestMethod]
+        public void Validation_02_02_2020()
+        {
+            // GIVEN
+            var distanceMatrix = new int[9, 9] { { 0, 5, 4, 6, 5, 6, 5, 6, 7 },
+                                                 { 5, 0, 5, 7, 2, 7, 6, 7, 4 },
+                                                 { 4, 5, 0, 4, 5, 4, 3, 4, 7 },
+                                                 { 6, 7, 4, 0, 7, 4, 5, 4, 9 },
+                                                 { 5, 2, 5, 7, 0, 7, 6, 7, 4 },
+                                                 { 6, 7, 4, 4, 7, 0, 5, 2, 9 },
+                                                 { 5, 6, 3, 5, 6, 5, 0, 5, 8 },
+                                                 { 6, 7, 4, 4, 7, 2, 5, 0, 9 },
+                                                 { 7, 4, 7, 9, 4, 9, 8, 9, 0 } };
+
+            // WHEN
+            var result = new TreeFinder().FindTree(distanceMatrix);
+
+            // THEN
+            var neighborsList = Utils.ConvertTreeToNeighboursList(result);
+            var stringResult = Utils.WriteNeighborsListToString(neighborsList);
+            var amoutOfVertices = "UNKNOWN";
+            var expectedResult = string.Join("\n", new string[] { amoutOfVertices,
+                "UNKNOWN"
+            }) + "\n";
+            Assert.AreEqual(expectedResult, stringResult);
+        }
     }
 }
