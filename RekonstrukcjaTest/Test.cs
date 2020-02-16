@@ -196,7 +196,6 @@ namespace RekonstrukcjaTest
             Assert.AreEqual(expectedResult, stringResult);
         }
 
-        // TODO: verify whether the expected result is correct
         [TestMethod]
         public void Large2()
         {
