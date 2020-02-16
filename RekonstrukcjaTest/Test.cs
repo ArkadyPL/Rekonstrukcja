@@ -257,6 +257,47 @@ namespace RekonstrukcjaTest
         }
 
         [TestMethod]
+        public void Validation_15_06_2019()
+        {
+            // GIVEN
+            var distanceMatrix = new int[10, 10] { { 0, 3, 2, 3, 5, 3, 4, 5, 5, 3 },
+                                                   { 3, 0, 3, 2, 4, 2, 3, 4, 4, 2 },
+                                                   { 2, 3, 0, 3, 5, 3, 4, 5, 5, 3 },
+                                                   { 3, 2, 3, 0, 4, 2, 3, 4, 4, 2 },
+                                                   { 5, 4, 5, 4, 0, 4, 3, 2, 2, 4 },
+                                                   { 3, 2, 3, 2, 4, 0, 3, 4, 4, 2 },
+                                                   { 4, 3, 4, 3, 3, 3, 0, 3, 3, 3 },
+                                                   { 5, 4, 5, 4, 2, 4, 3, 0, 2, 4 },
+                                                   { 5, 4, 5, 4, 2, 4, 3, 2, 0, 4 },
+                                                   { 3, 2, 3, 2, 4, 2, 3, 4, 4, 0 } };
+
+            // WHEN
+            var result = new TreeFinder().FindTree(distanceMatrix);
+
+            // THEN
+            var neighborsList = Utils.ConvertTreeToNeighboursList(result);
+            var stringResult = Utils.WriteNeighborsListToString(neighborsList);
+            var amoutOfVertices = "14";
+            var expectedResult = string.Join("\n", new string[] { amoutOfVertices,
+                "10",
+                "11",
+                "10",
+                "11",
+                "13",
+                "11",
+                "12",
+                "13",
+                "13",
+                "11",
+                "0;2;11",
+                "1;3;5;9;10;12",
+                "6;11;13",
+                "4;7;8;12"
+            }) + "\n";
+            Assert.AreEqual(expectedResult, stringResult);
+        }
+
+        [TestMethod]
         public void Validation_02_02_2020()
         {
             // GIVEN
