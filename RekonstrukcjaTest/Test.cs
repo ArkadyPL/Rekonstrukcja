@@ -298,6 +298,22 @@ namespace RekonstrukcjaTest
         }
 
         [TestMethod]
+        [ExpectedException(typeof(Exception), "Wrong input table!")]
+        public void Validation_05_11_2019_detecting_incorrect_matrix()
+        {
+            // GIVEN
+            var distanceMatrix = new int[3, 3] { { 0, 3, 2 },
+                                                 { 3, 0, 2 },
+                                                 { 2, 2, 0 } };
+
+            // WHEN
+            var result = new TreeFinder().FindTree(distanceMatrix);
+
+            // THEN
+            // expect exception
+        }
+
+        [TestMethod]
         public void Validation_02_02_2020()
         {
             // GIVEN
