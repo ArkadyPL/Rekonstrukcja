@@ -27,8 +27,7 @@ namespace Rekonstrukcja
                     newSubTreeRoot, 
                     subTree1, 
                     subTree2, 
-                    distanceFromSubTree1, 
-                    subTrees.Count);
+                    distanceFromSubTree1);
             }
 
             return subTrees[0];
@@ -39,8 +38,7 @@ namespace Rekonstrukcja
             Node newSubTree,
             Node subTree1,
             Node subTree2,
-            int distanceFromSubTree1,
-            int subTreesCount)
+            int distanceFromSubTree1)
         {
             var newDistances = new List<Tuple<Node, Node, int>>();
             var distances = new Dictionary<int, int>();

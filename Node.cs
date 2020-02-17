@@ -13,5 +13,10 @@ namespace Rekonstrukcja
             this.Index = index;
             this.IsLeaf = isLeaf;
         }
+
+        public override string ToString()
+        {
+            return $"Node #{Index}, isLeaf: {IsLeaf}, # of neighbours: {Neighbours.Count}";
+        }
     }
 }
