@@ -92,7 +92,7 @@ namespace Rekonstrukcja
                 return subTree1;
             }
 
-            var otherPair = distancesBetweenSubTrees.Find(x => x.Item1.Index == subTree1.Index || x.Item2.Index == subTree1.Index);
+            var otherPair = distancesBetweenSubTrees.OrderBy(x => x.Item3).First(x => x.Item1.Index == subTree1.Index || x.Item2.Index == subTree1.Index);
             int otherNodeIndex;
             if (otherPair.Item1.Index == subTree1.Index)
             {
