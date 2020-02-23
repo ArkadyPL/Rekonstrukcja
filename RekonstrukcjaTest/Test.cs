@@ -333,9 +333,28 @@ namespace RekonstrukcjaTest
             // THEN
             var neighborsList = Utils.ConvertTreeToNeighboursList(result);
             var stringResult = Utils.WriteNeighborsListToString(neighborsList);
-            var amoutOfVertices = "UNKNOWN";
+            var amoutOfVertices = "20";
             var expectedResult = string.Join("\n", new string[] { amoutOfVertices,
-                "UNKNOWN"
+                "15",
+                "9",
+                "13",
+                "11",
+                "9",
+                "10",
+                "14",
+                "10",
+                "19",
+                "1;4;17;18",
+                "5;7;12",
+                "3;12",
+                "10;11;13",
+                "2;12;14;16",
+                "6;13",
+                "0;16",
+                "13;15;17",
+                "9;16",
+                "9;19",
+                "8;18"
             }) + "\n";
             Assert.AreEqual(expectedResult, stringResult);
         }
