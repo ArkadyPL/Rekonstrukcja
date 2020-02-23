@@ -14,7 +14,7 @@ namespace Rekonstrukcja
 
             while (subTrees.Count > 1)
             {
-                var pair = distancesBetweenSubTrees.OrderBy(x => x.Item3).First();
+                var pair = this.PickPairToConnect(distancesBetweenSubTrees);
                 distancesBetweenSubTrees.Remove(pair);
                 pair.Deconstruct(out Node subTree1, out Node subTree2, out int distance);
 
@@ -31,6 +31,50 @@ namespace Rekonstrukcja
             }
 
             return subTrees[0];
+        }
+
+        private Tuple<Node, Node, int> PickPairToConnect(List<Tuple<Node, Node, int>> distancesBetweenSubTrees)
+        {
+            var minDistance = distancesBetweenSubTrees.Min(x => x.Item3);
+            var potentialPairs = distancesBetweenSubTrees.Where(x => x.Item3 == minDistance);
+            
+            foreach(var pair in potentialPairs)
+            {
+                pair.Deconstruct(out Node subTree1, out Node subTree2, out int distance);
+
+                var oldDistance = -1;
+                var correct = true;
+                foreach (var otherPair in distancesBetweenSubTrees.Where(x => x != pair && (x.Item1.Index == subTree1.Index || x.Item2.Index == subTree1.Index)))
+                {
+                    int otherNodeIndex;
+                    if (otherPair.Item1.Index == subTree1.Index)
+                    {
+                        otherNodeIndex = otherPair.Item2.Index;
+                    }
+                    else
+                    {
+                        otherNodeIndex = otherPair.Item1.Index;
+                    }
+
+                    var distance1 = otherPair.Item3;
+                    var distance2 = distancesBetweenSubTrees.Find(x => (x.Item1.Index == subTree2.Index && x.Item2.Index == otherNodeIndex) ||
+                        (x.Item1.Index == otherNodeIndex && x.Item2.Index == subTree2.Index)).Item3;
+
+                    var distanceFromSubTree1 = (distance + distance1 - distance2) / 2;
+                    if (oldDistance != -1 && oldDistance != distanceFromSubTree1)
+                    {
+                        correct = false;
+                    }
+                    oldDistance = distanceFromSubTree1;
+                }
+
+                if (correct)
+                {
+                    return pair;
+                }
+            }
+
+            throw new Exception();
         }
 
         private List<Tuple<Node, Node, int>> UpdateDistancesBetweenSubTrees(
