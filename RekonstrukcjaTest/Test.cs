@@ -358,5 +358,37 @@ namespace RekonstrukcjaTest
             }) + "\n";
             Assert.AreEqual(expectedResult, stringResult);
         }
+
+        [TestMethod]
+        public void Validation_02_03_2020()
+        {
+            // GIVEN
+            var distanceMatrix = new int[14, 14] { { 0, 7, 7, 4,  8, 6, 4,  8,  4, 5,  8,  4, 7, 2 },
+                                                   { 7, 0, 4, 5,  5, 3, 5,  5,  9, 8,  5,  9, 4, 7 },
+                                                   { 7, 4, 0, 5,  3, 3, 5,  5,  9, 8,  5,  9, 4, 7 },
+                                                   { 4, 5, 5, 0,  6, 4, 2,  6,  6, 5,  6,  6, 5, 4 },
+                                                   { 8, 5, 3, 6,  0, 4, 6,  6, 10, 9,  6, 10, 5, 8 },
+                                                   { 6, 3, 3, 4,  4, 0, 4,  4,  8, 7,  4,  8, 3, 6 },
+                                                   { 4, 5, 5, 2,  6, 4, 0,  6,  6, 5,  6,  6, 5, 4 },
+                                                   { 8, 5, 5, 6,  6, 4, 6,  0, 10, 9,  2, 10, 5, 8 },
+                                                   { 4, 9, 9, 6, 10, 8, 6, 10,  0, 7, 10,  4, 9, 4 },
+                                                   { 5, 8, 8, 5,  9, 7, 5,  9,  7, 0,  9,  7, 8, 5 },
+                                                   { 8, 5, 5, 6,  6, 4, 6,  2, 10, 9,  0, 10, 5, 8 },
+                                                   { 4, 9, 9, 6, 10, 8, 6, 10,  4, 7, 10,  0, 9, 4 },
+                                                   { 7, 4, 4, 5,  5, 3, 5,  5,  9, 8,  5,  9, 0, 7 },
+                                                   { 2, 7, 7, 4,  8, 6, 4,  8,  4, 5,  8,  4, 7, 0 } };
+
+            // WHEN
+            var result = new TreeFinder().FindTree(distanceMatrix);
+
+            // THEN
+            var neighborsList = Utils.ConvertTreeToNeighboursList(result);
+            var stringResult = Utils.WriteNeighborsListToString(neighborsList);
+            var amoutOfVertices = "UNKNOWN";
+            var expectedResult = string.Join("\n", new string[] { amoutOfVertices,
+                "UNKNOWN"
+            }) + "\n";
+            Assert.AreEqual(expectedResult, stringResult);
+        }
     }
 }
