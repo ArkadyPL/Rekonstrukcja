@@ -18,5 +18,15 @@ namespace Rekonstrukcja
         {
             return $"Node #{Index}, isLeaf: {IsLeaf}, # of neighbours: {Neighbours.Count}";
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Node node && this == node;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Index.GetHashCode();
+        }
     }
 }

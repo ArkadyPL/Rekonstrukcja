@@ -43,8 +43,17 @@ namespace Rekonstrukcja
                 Console.WriteLine();
                 OutputResult(result, new FileStream("result.txt", FileMode.Create));
                 Console.WriteLine("Result has been saved to the file result.txt");
+                if (TreeVerificator.VerifyTree(result, distanceMatrix))
+                {
+                    Console.WriteLine("\nResult is correct!\n");
+                }
+                else
+                {
+                    Console.WriteLine("\nResult is NOT correct!\n");
+                }
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("An error occured: {0}", e.Message);
             }
@@ -84,6 +93,7 @@ namespace Rekonstrukcja
         {
             string resultsPath = "wyniki.txt";
             var stopwatch = new Stopwatch();
+            //var correct = true;
 
             Console.WriteLine("Performance tests - started");
             using (var stream = new FileStream(resultsPath, FileMode.Create))
@@ -98,8 +108,12 @@ namespace Rekonstrukcja
                         {
                             var matrix = InputGenerator.GenerateRandomInput(i);
                             stopwatch.Start();
-                            new TreeFinder().FindTree(matrix);
+                            var tree = new TreeFinder().FindTree(matrix);
                             stopwatch.Stop();
+                            //if (TreeVerificator.VerifyTree(tree, matrix))
+                            //{
+                            //    correct = false;
+                            //}
                         }
                         writer.WriteLine($"{i};{stopwatch.ElapsedMilliseconds / 10.0}");
                         stopwatch.Reset();
@@ -107,6 +121,7 @@ namespace Rekonstrukcja
                 }
             }
             Console.WriteLine("Performance tests - finished, results were saved in " + resultsPath + " file");
+            //Console.WriteLine("Result of Verification: {0}", correct);
         }
     }
 }
