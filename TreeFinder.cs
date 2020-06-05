@@ -35,8 +35,8 @@ namespace Rekonstrukcja
 
         private Tuple<Node, Node, int> PickPairToConnect(List<Tuple<Node, Node, int>> distancesBetweenSubTrees)
         {
-            var minDistance = distancesBetweenSubTrees.Min(x => x.Item3);
-            var potentialPairs = distancesBetweenSubTrees.Where(x => x.Item3 == minDistance);
+            //var minDistance = distancesBetweenSubTrees.Min(x => x.Item3);
+            var potentialPairs = distancesBetweenSubTrees.OrderBy(x => x.Item3);
             
             foreach(var pair in potentialPairs)
             {
@@ -74,7 +74,7 @@ namespace Rekonstrukcja
                 }
             }
 
-            throw new Exception();
+            throw new Exception("Wrong input table!");
         }
 
         private List<Tuple<Node, Node, int>> UpdateDistancesBetweenSubTrees(
